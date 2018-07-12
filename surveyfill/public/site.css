@@ -1,0 +1,10 @@
+.fixed-bottom {
+       position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+}
+
+.center {
+    margin: 0 auto
+}

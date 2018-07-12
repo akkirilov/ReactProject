@@ -1,0 +1,79 @@
+DROP DATABASE IF EXISTS `surveyfill`;
+CREATE DATABASE IF NOT EXISTS `surveyfill`;
+USE `surveyfill`;
+
+CREATE TABLE `users` (
+	`userId` BIGINT AUTO_INCREMENT,
+    `username` VARCHAR(25) NOT NULL,
+    `email` VARCHAR(55) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `isDeleted` BOOLEAN DEFAULT FALSE,
+    `isBanned` BOOLEAN DEFAULT FALSE,
+    `role` VARCHAR(25) NOT NULL DEFAULT 'user',
+    CONSTRAINT `pk_users` PRIMARY KEY (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `surveys` (
+	`surveyId` BIGINT NOT NULL AUTO_INCREMENT,
+    `userId` BIGINT,
+    `title` VARCHAR(255),
+    `notes` VARCHAR(255),
+    `respondents` INT(11) DEFAULT 0,
+    `isDeleted` BOOLEAN DEFAULT FALSE,
+    CONSTRAINT `pk_surveys` PRIMARY KEY (`surveyId`),
+    CONSTRAINT `fk_surveys_users` FOREIGN KEY (`userId`)
+		REFERENCES `users` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `sections` (
+	`sectionId` BIGINT NOT NULL AUTO_INCREMENT,
+    `surveyId` BIGINT,
+    `sectionTitle` VARCHAR(255),
+    CONSTRAINT `pk_sections` PRIMARY KEY (`sectionId`),
+    CONSTRAINT `fk_sections_surveys` FOREIGN KEY (`surveyId`)
+		REFERENCES `surveys` (`surveyId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `types_of_questions` (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255),
+    CONSTRAINT `pk_types` PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+INSERT INTO `types_of_questions` (`name`) VALUES
+('One answer'),
+('Multy answers'),
+('Free number'),
+('Free text');
+
+CREATE TABLE `questions` (
+	`questionId` BIGINT NOT NULL AUTO_INCREMENT,
+    `sectionId` BIGINT,
+    `questionTitle` VARCHAR(255),
+    `typeId` BIGINT,
+    `isRequired` BOOLEAN DEFAULT FALSE,
+    CONSTRAINT `pk_questions` PRIMARY KEY (`questionId`),
+    CONSTRAINT `fk_questions_sections` FOREIGN KEY (`sectionId`)
+		REFERENCES `sections` (`sectionId`),
+    CONSTRAINT `fk_questions_types_of_questions` FOREIGN KEY (`typeId`)
+		REFERENCES `types_of_questions` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `possibilities` (
+	`possibilityId` BIGINT NOT NULL AUTO_INCREMENT,
+    `questionId` BIGINT,
+    `possibilityTitle` VARCHAR(255),
+    CONSTRAINT `pk_possibilities` PRIMARY KEY (`possibilityId`),
+    CONSTRAINT `fk_possibilities_questions` FOREIGN KEY (`questionId`)
+		REFERENCES `questions` (`questionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `answers` (
+	`answerId` BIGINT NOT NULL AUTO_INCREMENT,
+    `possibilityId` BIGINT,
+    `userId` BIGINT DEFAULT 0,
+    `text` VARCHAR(255),
+    CONSTRAINT `pk_answers` PRIMARY KEY (`answerId`),
+    CONSTRAINT `fk_answers_possibilities` FOREIGN KEY (`possibilityId`)
+		REFERENCES `possibilities` (`possibilityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
