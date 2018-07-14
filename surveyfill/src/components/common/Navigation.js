@@ -25,6 +25,9 @@ class NavigationBase extends Component {
         this.state = {
             isOpen: false,
             loggedView: (<Nav className="ml-auto" navbar>
+					        <NavItem>
+					            <NavLink tag={Link} to="/all-surveys">All surveys</NavLink>
+					        </NavItem>
                             <NavItem>
                                 <NavLink tag={Link} to="/add-new-survey">Add survey</NavLink>
                             </NavItem>
@@ -36,6 +39,9 @@ class NavigationBase extends Component {
                             </NavItem>
                         </Nav>),
             notLoggedView: (<Nav className="ml-auto" navbar>
+						        <NavItem>
+						            <NavLink tag={Link} to="/all-surveys">All surveys</NavLink>
+						        </NavItem>
                                 <NavItem>
                                     <NavLink tag={Link} to="/login">Login</NavLink>
                                 </NavItem>

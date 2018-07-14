@@ -18,12 +18,66 @@ function getById(id) {
     });
 }
 
+function getByIdWithAnswers(id) {
+    return $.ajax({
+        type: "POST",
+        data: {id},
+        dataType: "text",
+        url: config.apiUrl + '/surveys/getWithAnswers'
+    });
+}
+
 function addSurvey(surveyData) {
     return $.ajax({
         type: "POST",
         data: surveyData,
         dataType: "text",
         url: config.apiUrl + '/surveys/add'
+    });
+}
+
+function fillSurvey(surveyData) {
+    return $.ajax({
+        type: "POST",
+        data: surveyData,
+        dataType: "text",
+        url: config.apiUrl + '/surveys/fill'
+    });
+}
+
+function getRecentSurveys() {
+    return $.ajax({
+        type: "POST",
+        data: {},
+        dataType: "text",
+        url: config.apiUrl + '/surveys/getRecent'
+    });
+}
+
+function getSurveysByUserId(userData) {
+    return $.ajax({
+        type: "POST",
+        data: userData,
+        dataType: "text",
+        url: config.apiUrl + '/surveys/getByUserId'
+    });
+}
+
+function getAllSurveys() {
+    return $.ajax({
+        type: "POST",
+        data: {},
+        dataType: "text",
+        url: config.apiUrl + '/surveys/getAll'
+    });
+}
+
+function deleteSurvey(surveyData) {
+    return $.ajax({
+        type: "POST",
+        data: {surveyData},
+        dataType: "text",
+        url: config.apiUrl + '/surveys/delete'
     });
 }
 
@@ -37,10 +91,16 @@ function editSurvey(surveyData) {
 }
 
 let surveyService = {
+	getSurveysByUserId,
+	getRecentSurveys,
     getTypesOfQuestions,
+    deleteSurvey,
+    getAllSurveys,
     addSurvey,
+    fillSurvey,
     editSurvey,
-    getById
+    getById,
+    getByIdWithAnswers
 }
 
 export default surveyService;

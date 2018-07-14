@@ -47,6 +47,7 @@ class RegisterPageBase extends Component {
                 action.authtoken = res.authtoken;
                 action.username = res.username; 
                 action.userId = res.userId;
+                action.role = res.role;
                 dispatch(action);
                 dispatch(notificationActions.info(res.success));
             }

@@ -50,6 +50,7 @@ class NewSurveyBase extends Component {
         const dispatch = this.props.dispatch;
         let error = surveyValidator.validateNewSurvey(this.props.survey);
         let survey = Object.assign({}, this.props.survey, {authtoken: this.props.user.authtoken, userId: this.props.user.userId});
+        console.log("new survey")
         console.log(survey)
         if (error) {
             this.props.dispatch(notificationActions.error(error));

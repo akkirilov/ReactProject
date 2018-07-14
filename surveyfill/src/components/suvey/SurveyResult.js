@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; 
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import FillSection from './FillSection';
@@ -11,7 +11,7 @@ import surveyValidator from '../../validators/surveyValidator';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
-class FillSurveyBase extends Component {
+class SurveyResultBase extends Component {
 
     constructor(props) {
         super(props);
@@ -22,10 +22,10 @@ class FillSurveyBase extends Component {
     componentDidMount() {
         const dispatch = this.props.dispatch;
         let surveyId = this.props.match.params.id;
-        surveyService.getById(surveyId)
+        surveyService.getByIdWithAnswers(surveyId)
         .then(res => {
             res = JSON.parse(res);
-            console.log("res from db")
+            console.log("res from survey with answers")
             console.log(res)
             if (res.error) {
                 dispatch(notificationActions.error(res.error));
@@ -87,31 +87,9 @@ class FillSurveyBase extends Component {
             : (<div className="row">
                 <div className="col-sm-12">
                     <h1 className="text-center">{this.props.survey.title}</h1>
-                    <h3 className="text-center">{this.props.survey.notes}</h3>
+                    <h3 className="text-center">{this.props.survey.notes} <Link to={'/fill-survey/'+this.props.survey.surveyId}></Link></h3>
                     <br /><br />
-                    <Form>
-                    <div className="row">
-                        <div className="col-sm-12">
-                            {this.props.survey.sections
-                                .map((x, i) => (<FillSection 
-                                sectionName={'s' + x.sectionId} 
-                                key={x.sectionId} 
-                                counter={i + 1}
-                                sectionId={x.sectionId}
-                                sectionCount={x.sectionCount}  
-                                sectionTitle={x.sectionTitle}/>))}
-                        </div>
-                    </div>
-                    <br />
-                    <div className="row">
-                        <div className="col-sm-3 offset-3">
-                            <Button className="center" color="success" onClick={this.handleSubmit} >Submit</Button>
-                        </div>
-                        <div className="col-sm-3">
-                            <Button className="center" color="danger" onClick={this.handleCancel} >Cancel</Button>
-                        </div>
-                    </div>
-                    </Form>
+                    
                 </div>
             </div>)
         );
@@ -122,6 +100,6 @@ function mapStateToProps(state) {
     return {survey: state.survey, user: state.user};
 }
 
-const FillSurvey = connect(mapStateToProps)(FillSurveyBase);
-export default FillSurvey;
+const SurveyResult = connect(mapStateToProps)(SurveyResultBase);
+export default SurveyResult;
         

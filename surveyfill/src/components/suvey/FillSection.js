@@ -24,7 +24,6 @@ class FillSectionBase extends Component {
                             key={x.questionId} 
                             questionName={'s' + x.sectionId + 'q' + x.questionId}
                             sectionId={x.sectionId}
-                            typeId={x.typeId}
                             sectionCount={this.props.sectionCount}
                             questionCount={x.questionCount}  
                             questionId={x.questionId} 

@@ -56,8 +56,13 @@ function removePossibility(sectionId, questionId, possibilityId) {
     return {type: surveyConstants.REMOVE_POSSIBILITY, sectionId, questionId, possibilityId};
 }
 
+function changeFilledValue(questionId, possibilityId, typeId, value) {
+    return {type: surveyConstants.ANSWER, questionId, possibilityId, typeId, value};
+}
+
 const userActions = {
 
+	changeFilledValue,
     initializeSurvey,
     changeSurveyHeader,
     clearSurvey,

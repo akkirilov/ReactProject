@@ -13,6 +13,7 @@ export function user(state = initialState, action) {
                         authtoken: action.authtoken,
                         username: action.username,
                         userId: action.userId,
+                        role: action.role,
                         infoMessage: action.infoMessage
                     });
         case userConstants.LOGOUT:

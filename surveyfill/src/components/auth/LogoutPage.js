@@ -11,8 +11,8 @@ import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 class LogoutPageBase extends Component {
 
     componentDidMount() {
-        if (this.props.reduxState.authtoken) {
-            userService.logout(this.props.reduxState.authtoken)
+        if (this.props.user.authtoken) {
+            userService.logout(this.props.user.authtoken)
                 .then(res => {
                 res = JSON.parse(res);
                 if (res.error) {
@@ -35,7 +35,7 @@ class LogoutPageBase extends Component {
 }
 
 function mapStateToProps(state) {
-    return {reduxState: state};
+    return {user: state.user};
 }
  
 const LogoutPage = connect(mapStateToProps)(LogoutPageBase);

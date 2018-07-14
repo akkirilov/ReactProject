@@ -10,7 +10,7 @@ import surveyActions from '../../actions/surveyActions';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 class FillQuestionBase extends Component {
-
+	
     render() {
         return (
             <div className="row">
@@ -25,7 +25,9 @@ class FillQuestionBase extends Component {
                             possibilityName={'s' + x.sectionId + 'q' + x.questionId + 'p' + x.possibilityId}
                             edit={this.props.edit}
                             sectionId={x.sectionId}
-                            typeId={this.props.typeId}
+                            typeId={x.typeId}
+                        	qtypeId={x.typeId}
+                        	questionTitle={this.props.questionTitle}
                             questionId={x.questionId}
                             possibilityId={x.possibilityId}
                             possibilityTitle={x.possibilityTitle} />)

@@ -13,6 +13,7 @@ function generatePossibility(sectionId, questionId, possibilityId) {
 }
 
 let initialState = {
+	answers: [{}],
     title: '',
     notes: '',
     typesOfQuestions:[{}],
@@ -131,6 +132,34 @@ export function survey(state = initialState, action) {
                     x.possibilityId = newId;
                     x.possibilityCount = newId;
                 })
+            return newState;
+        case surveyConstants.ANSWER:
+        	newState = Object.assign({}, state);
+        	let possibiltyValue = action.value;
+        	let possibilityId = action.possibilityId;
+        	let questionId = action.questionId;
+        	let typeId = action.typeId;
+        	if (typeId == 1) {
+				newState.possibilities
+				.filter(x=> x.questionId === questionId)
+				.forEach(x=> x.marked = false)
+				.filter(x => x.possibilityId === possibilityId)
+				.forEach(x=> x.marked = true);
+        	} else if(typeId == 2) {
+        		newState.possibilities
+				.filter(x=> x.possibilityId === possibilityId)
+				.forEach(x=> {
+					if (x.marked) {
+						x.marked = false
+					} else {
+						x.marked = true
+					}
+				})
+        	} else {
+        		newState.possibilities
+				.filter(x=> x.possibilityId === possibilityId)
+				.forEach(x=> x.marked = possibiltyValue)
+        	}
             return newState;
         default:
             return state;
