@@ -21,6 +21,7 @@ export function user(state = initialState, action) {
                         authtoken: null,
                         username: null,
                         userId: null,
+                        role: null,
                         infoMessage: action.infoMessage
                     });
         default:

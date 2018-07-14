@@ -15,6 +15,7 @@ import Notification from './components/notification/Notification';
 import LoginPage from './components/auth/LoginPage';
 import LogoutPage from './components/auth/LogoutPage';
 import Profile from './components/user/Profile';
+import AllUsers from './components/user/AllUsers';
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
@@ -49,6 +50,7 @@ class App extends Component {
                             	<Route exact path="/survey-result/:id" component={SurveyResult}/>
                             	<Route exact path="/delete-survey/:id" component={DeleteSurvey}/>
                             	<Route exact path="/all-surveys" component={AllSurveys}/>
+                            	<Route exact path="/all-users" component={AllUsers}/>
                             	<Route exact path="/register" component={RegisterPage}/>
                                 <Route exact path="/login" component={LoginPage}/>
                                 <Route exact path="/logout" component={LogoutPage}/>

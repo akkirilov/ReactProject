@@ -55,10 +55,30 @@ function logout(authtoken) {
     });
 }
 
+function getAllUsers(userData){
+	return $.ajax({
+        type: "POST",
+        data: userData,
+        dataType: "text",
+        url: config.apiUrl + '/users/all'
+    });
+}
+
+function deleteUser(userData){
+	return $.ajax({
+        type: "POST",
+        data: userData,
+        dataType: "text",
+        url: config.apiUrl + '/users/delete'
+    });
+}
+
 let userService = {
     login,
     register,
-    logout
+    logout,
+    deleteUser,
+    getAllUsers
 }
 
 export default userService;

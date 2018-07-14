@@ -12,6 +12,10 @@ import userValidator from '../../validators/userValidator';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 class FillSectionBase extends Component {
+	
+	componentDidMount(){
+		console.log("load fill section", this.props.survey)
+	}
 
     render() {
         return (
@@ -24,6 +28,7 @@ class FillSectionBase extends Component {
                             key={x.questionId} 
                             questionName={'s' + x.sectionId + 'q' + x.questionId}
                             sectionId={x.sectionId}
+                        	typeId={x.typeId}
                             sectionCount={this.props.sectionCount}
                             questionCount={x.questionCount}  
                             questionId={x.questionId} 

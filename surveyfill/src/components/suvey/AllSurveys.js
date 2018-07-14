@@ -21,6 +21,7 @@ class AllSurveysBase extends Component {
     		console.log(res)
     		this.setState({surveys:res.surveys, ready: true});
     	})
+    	console.log(this.props.user)
     }
 
     render() {

@@ -25,7 +25,7 @@ class FillQuestionBase extends Component {
                             possibilityName={'s' + x.sectionId + 'q' + x.questionId + 'p' + x.possibilityId}
                             edit={this.props.edit}
                             sectionId={x.sectionId}
-                            typeId={x.typeId}
+                            typeId={this.props.typeId}
                         	qtypeId={x.typeId}
                         	questionTitle={this.props.questionTitle}
                             questionId={x.questionId}

@@ -22,7 +22,7 @@ class NewQuestionBase extends Component {
     }
 
     handleAddPossibility(e) {
-        this.props.dispatch(surveyActions.addPossibility(this.props.sectionId, this.props.questionId));
+    	this.props.dispatch(surveyActions.addPossibility(this.props.sectionId, this.props.questionId));
     }
 
     handleRemoveQuestion() {
@@ -79,7 +79,7 @@ class NewQuestionBase extends Component {
                     <div className="row">
                         <div className="col-sm-12">
                         {this.props.survey.possibilities
-                            .filter(x => x.sectionId === this.props.sectionId && x.questionId === this.props.questionId)
+                            .filter(x => x.sectionId === this.props.sectionId && x.questionId === this.props.questionId && this.props.typeId < 3)
                             .map(x => (
                             <NewPossibility 
                                 key={x.possibilityId} 
@@ -98,7 +98,7 @@ class NewQuestionBase extends Component {
                     </div>
                     <div className="row">
                         <div className="col-sm-12">
-                            {this.props.edit ? '' : <Button className="float-sm-right" color="primary" size="sm" onClick={this.handleAddPossibility} >Add new possibility</Button>}
+                            {this.props.edit ? '' : this.props.typeId < 3 ? <Button className="float-sm-right" color="primary" size="sm" onClick={this.handleAddPossibility} >Add new possibility</Button>:''}
                         </div>
                     </div>
                 </div>

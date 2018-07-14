@@ -72,6 +72,7 @@ class EditSurveyBase extends Component {
             surveyService.editSurvey(survey)
             .then(res => {
                 res = JSON.parse(res);
+                console.log('edit survey ', res)
                 if (res.error) {
                     dispatch(notificationActions.error(res.error));
                 } else {

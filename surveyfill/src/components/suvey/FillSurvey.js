@@ -30,6 +30,7 @@ class FillSurveyBase extends Component {
             if (res.error) {
                 dispatch(notificationActions.error(res.error));
             } else {
+            	res.surveyId = surveyId;
                 res.title = res.survey[0].title;
                 res.notes = res.survey[0].notes;
                 res.sections.forEach((s, si) => {
@@ -37,10 +38,9 @@ class FillSurveyBase extends Component {
                     res.questions.filter(q => q.sectionId === s.sectionId).forEach((q, qi) => {
                         q.sectionCount = si + 1;
                         q.questionCount = qi + 1;
-                        q.typeId = Number(q.typeId);
-                        res.possibilities.filter(p => p.questionId === q.questionId && p.sectionId === s.sectionId)
+                        q.typeId = q.typeId;
+                        res.possibilities.filter(p => p.questionId === q.questionId)
                             .forEach((p, pi) => {
-                            	console.log(p.questionId, )
                                 p.sectionCount = s.sectionCount;
                                 p.questionCount = q.questionCount;
                                 p.possibilityCount = pi + 1;
@@ -57,17 +57,17 @@ class FillSurveyBase extends Component {
         const dispatch = this.props.dispatch;
         let error = surveyValidator.validateFillSurvey(this.props.survey);
         let survey = Object.assign({}, this.props.survey, {authtoken: this.props.user.authtoken, userId: this.props.user.userId || 0});
-        console.log(survey)
          if (error) {
              this.props.dispatch(notificationActions.error(error));
          } else {
              surveyService.fillSurvey(survey)
              .then(res => {
                  res = JSON.parse(res);
+                 console.log("fill survey res ", res)
                  if (res.error) {
                      dispatch(notificationActions.error(res.error));
                  } else {
-                     dispatch(notificationActions.info("Successfully added new survey!"));
+                     dispatch(notificationActions.info("Successfully filled survey!"));
                      dispatch(surveyActions.clearSurvey());
                      this.setState({redirect: <Redirect to='/' />});
                  }

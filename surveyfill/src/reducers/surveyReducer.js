@@ -134,6 +134,7 @@ export function survey(state = initialState, action) {
                 })
             return newState;
         case surveyConstants.ANSWER:
+        	console.log(action)
         	newState = Object.assign({}, state);
         	let possibiltyValue = action.value;
         	let possibilityId = action.possibilityId;
@@ -141,13 +142,14 @@ export function survey(state = initialState, action) {
         	let typeId = action.typeId;
         	if (typeId == 1) {
 				newState.possibilities
-				.filter(x=> x.questionId === questionId)
+				.filter(x=> x.questionId == questionId)
 				.forEach(x=> x.marked = false)
-				.filter(x => x.possibilityId === possibilityId)
+				newState.possibilities
+				.filter(x => x.possibilityId == possibilityId)
 				.forEach(x=> x.marked = true);
         	} else if(typeId == 2) {
         		newState.possibilities
-				.filter(x=> x.possibilityId === possibilityId)
+				.filter(x=> x.possibilityId == possibilityId)
 				.forEach(x=> {
 					if (x.marked) {
 						x.marked = false

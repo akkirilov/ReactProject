@@ -42,14 +42,29 @@ class NavigationBase extends Component {
 						        <NavItem>
 						            <NavLink tag={Link} to="/all-surveys">All surveys</NavLink>
 						        </NavItem>
-                                <NavItem>
-                                    <NavLink tag={Link} to="/login">Login</NavLink>
-                                </NavItem>
-                                <NavItem>
-                                    <NavLink tag={Link} to="/register">Register</NavLink>
-                                </NavItem>
-                            </Nav>)
+						        <NavItem>
+						        	<NavLink tag={Link} to="/login">Login</NavLink>
+	                            </NavItem>
+	                            <NavItem>
+	                                <NavLink tag={Link} to="/register">Register</NavLink>
+	                            </NavItem>
+                            </Nav>),
+            adminView: (<Nav className="ml-auto" navbar>
+								<NavItem>
+						           	<NavLink tag={Link} to="/all-users">All users</NavLink>
+						        </NavItem>
+						        <NavItem>
+						            <NavLink tag={Link} to="/all-surveys">All surveys</NavLink>
+						        </NavItem>
+						        <NavItem>
+						        	<NavLink tag={Link} to="/myProfile">Profile</NavLink>
+	                            </NavItem>
+	                            <NavItem>
+	                                <NavLink tag={Link} to="/logout">Logout</NavLink>
+	                            </NavItem>
+					        </Nav>)
         }
+        
         this.toggle = this.toggle.bind(this);
     }
 
@@ -67,7 +82,9 @@ class NavigationBase extends Component {
             <NavbarToggler onClick={this.toggle} />
             <Collapse isOpen={this.state.isOpen} navbar>
                 {this.props.user.authtoken 
-                ? this.state.loggedView
+                ? this.props.user.role !== 'admin'
+                	? this.state.loggedView
+                	: this.state.adminView
                 : this.state.notLoggedView}
             </Collapse>
             </Navbar>

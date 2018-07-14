@@ -60,6 +60,7 @@ class NewSectionBase extends Component {
                             sectionId={x.sectionId}
                             edit={this.props.edit}
                             sectionCount={this.props.sectionCount}
+                        	typeId={x.typeId}
                             questionCount={x.questionCount}  
                             questionId={x.questionId} 
                             questionTitle={x.questionTitle} />)

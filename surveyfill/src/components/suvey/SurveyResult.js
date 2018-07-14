@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 
 import FillSection from './FillSection';
 import notificationActions from '../../actions/notificationActions';
-import surveyActions from '../../actions/surveyActions';
 import surveyService from '../../services/surveyService';
-import surveyValidator from '../../validators/surveyValidator';
 
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
@@ -15,12 +13,15 @@ class SurveyResultBase extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = { loading: true, survey:{}};
     }
 
     componentDidMount() {
-        const dispatch = this.props.dispatch;
+    	if (!this.props.user.authtoken) {
+			this.setState({redirect:<Redirect to='/login' />});
+			this.props.dispatch(notificationActions.error('You need to be logged to view survey results!'));
+		}
+    	const dispatch = this.props.dispatch;
         let surveyId = this.props.match.params.id;
         surveyService.getByIdWithAnswers(surveyId)
         .then(res => {
@@ -40,56 +41,54 @@ class SurveyResultBase extends Component {
                         q.typeId = Number(q.typeId);
                         res.possibilities.filter(p => p.questionId === q.questionId && p.sectionId === s.sectionId)
                             .forEach((p, pi) => {
-                            	console.log(p.questionId, )
                                 p.sectionCount = s.sectionCount;
                                 p.questionCount = q.questionCount;
                                 p.possibilityCount = pi + 1;
+                                p.typeId = q.typeId;
+                                let answers = [];
+								res.answers
+									.filter(a => a.possibilityId == p.possibilityId)
+									.forEach(a => {
+										if(q.typeId == 1 && a.text == 'true'){
+											answers.push(a.text);
+		                            	} else if(q.typeId > 1) {
+		                            		answers.push(a.text);
+		                            	}
+									})
+                            	if (p.typeId > 2) {
+										p.possibilityTitle = 'Answers';
+										p.answers = answers.join(', ');
+                                } else {
+                                	p.answers = answers.length;
+                                }
                         })
                     })
                 })
-                dispatch(surveyActions.initializeSurvey(res));
+                this.setState({loading: false, survey: res});
             }
         }).catch(err => console.log(err.statusText));
     }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        const dispatch = this.props.dispatch;
-        let error = surveyValidator.validateFillSurvey(this.props.survey);
-        let survey = Object.assign({}, this.props.survey, {authtoken: this.props.user.authtoken, userId: this.props.user.userId || 0});
-        console.log(survey)
-         if (error) {
-             this.props.dispatch(notificationActions.error(error));
-         } else {
-             surveyService.fillSurvey(survey)
-             .then(res => {
-                 res = JSON.parse(res);
-                 if (res.error) {
-                     dispatch(notificationActions.error(res.error));
-                 } else {
-                     dispatch(notificationActions.info("Successfully added new survey!"));
-                     dispatch(surveyActions.clearSurvey());
-                     this.setState({redirect: <Redirect to='/' />});
-                 }
-             }).catch(err => console.log(err.statusText));
-         }
-    }
-
-    handleCancel() {
-        this.props.dispatch(surveyActions.clearSurvey());
-        this.setState({redirect: <Redirect to='/' />});
-    }
-
+    
     render() {
         return (
-            this.state.redirect
-            ? this.state.redirect
-            : (<div className="row">
+            this.state.loading
+            ? <h2>Loading ...</h2>
+            : this.state.redirect 
+            	? this.state.redirect
+            	:(<div className="row">
                 <div className="col-sm-12">
-                    <h1 className="text-center">{this.props.survey.title}</h1>
-                    <h3 className="text-center">{this.props.survey.notes} <Link to={'/fill-survey/'+this.props.survey.surveyId}></Link></h3>
-                    <br /><br />
-                    
+                    <h1 className="text-center">{this.state.survey.title}</h1>
+                    <br />
+                    <h3 className="text-center">{this.state.survey.notes} <Link to={'/fill-survey/'+this.props.survey.surveyId}></Link><br /></h3>
+                    <br />
+                    <h3 className="text-center">Respondents: {this.state.survey.survey[0].respondents} </h3>
+                    <br />{"state survey for fill", console.log(this.state.survey)}
+                    <br />
+                    {this.state.survey.sections.map(s=> <div><h2>{s.sectionTitle}</h2>{
+                    	this.state.survey.questions.filter(q => q.sectionId === s.sectionId).map(q => <div><h3>{q.questionTitle}</h3>{
+                    		this.state.survey.possibilities.filter(p => p.questionId === q.questionId).map(p => <div><h4>{p.possibilityTitle}: {p.answers}</h4></div>)
+                    	}<br /></div>)
+                    }</div>)}
                 </div>
             </div>)
         );

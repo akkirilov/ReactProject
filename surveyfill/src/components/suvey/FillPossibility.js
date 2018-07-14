@@ -25,33 +25,32 @@ class FillPossibilityBase extends Component {
             type = 'checkbox';
         } else if (this.props.typeId == 3) {
             type = 'number';
-            let labelSize = 'sm-2';
+            labelSize = 'sm-2';
         } else if (this.props.typeId == 4) {
         	type = 'textarea';
-            let labelSize = 'sm-2';
+            labelSize = 'sm-2';
         }
         this.setState({type, labelSize});
-        console.log(type);
     }
 
     changeFilledValue(e) {
     	
-        this.props.dispatch(surveyActions.changeFilledValue(this.props.questionId, this.props.possibilityId, this.props.typeId, e.target.value));
+        this.props.dispatch(surveyActions.changeFilledValue(this.props.sectionId, this.props.questionId, this.props.possibilityId, this.props.typeId, e.target.value));
     }
 
     render() {
         return (
-            this.state.type == "textarea" || this.state.type == "number"
+            this.props.typeId == 3 || this.props.typeId == 4
             ? (<FormGroup>
                 <Label for={this.props.possibilityId}>{this.props.questionTitle}</Label>
-                <Input onChange={this.changeFilledValue} type={this.state.type} name={this.props.questionId} />
+                <Input onChange={this.changeFilledValue} type={this.props.typeId == 3?"number":"textarea"} name={this.props.questionId} />
                 
                 <br />
             </FormGroup>)
             : (<FormGroup check horizontal>
                 <Label check >
-                <Input onChange={this.changeFilledValue} type={this.state.type} name={this.props.questionId} />
-                {this.props.possibilityTitle} ntn
+                <Input onChange={this.changeFilledValue} type={this.props.typeId == 1?"radio":"checkbox"} name={this.props.questionId} />
+                {this.props.possibilityTitle}
                 </Label>
                 <br />
             </FormGroup>)
