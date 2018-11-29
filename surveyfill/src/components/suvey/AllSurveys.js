@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import surveyService from '../../services/surveyService';
@@ -15,20 +15,22 @@ class AllSurveysBase extends Component {
     }
     
     componentDidMount() {
-    	surveyService.getAllSurveys()
+    	surveyService.getAllSurveys(this.props.user.authtoken)
     	.then(res => {
-    		res = JSON.parse(res);
-    		console.log(res)
-    		this.setState({surveys:res.surveys, ready: true});
+//    		res = JSON.parse(res);
+//    		console.log(res)
+    		this.setState({surveys:res, ready: true});
     	})
     	console.log(this.props.user)
     }
 
     render() {
-        return (
+        return (!this.props.user.authtoken
+                ? <Redirect to="/login" />  
+                    : 
         <div>
         	{this.state.ready 
-        		? this.state.surveys.map(x=> <div key={x.surveyId}>{x.title} <Link to={'/survey-result/' + x.surveyId}>RESULTS </Link> <Link to={'/fill-survey/' + x.surveyId}>FILL </Link>{this.props.user.role=='admin'?<span><Link to={'/edit-survey/' + x.surveyId}>EDIT </Link> <Link to={'/delete-survey/' + x.surveyId}>DELETE </Link></span> :''}</div>)
+        		? this.state.surveys.map(x=> <div key={x._id}>{x.title} <Link to={'/survey-result/' + x._id}>RESULTS </Link> <Link to={'/fill-survey/' + x._id}>FILL </Link>{this.props.user.role=='admin'?<span><Link to={'/edit-survey/' + x._id}>EDIT </Link> <Link to={'/delete-survey/' + x._id}>DELETE </Link></span> :''}</div>)
         		: 'LOADING ...'
         	}
         </div>

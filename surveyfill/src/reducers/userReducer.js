@@ -9,6 +9,7 @@ let initialState = {
 export function user(state = initialState, action) {
     switch (action.type) {
         case userConstants.LOGIN:
+        	console.log('in login reducer')
             return Object.assign({}, state, {
                         authtoken: action.authtoken,
                         username: action.username,

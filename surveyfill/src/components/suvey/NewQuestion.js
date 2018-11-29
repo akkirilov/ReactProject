@@ -70,7 +70,7 @@ class NewQuestionBase extends Component {
                         <Label sm={1} for={this.props.questionName + 't'}>Type: </Label>
                         <Col sm={3}>
                         <Input onChange={this.handleQuestionType} type="select" name={this.props.questionName + 't'} id={this.props.questionName + 'r'}>
-                            {this.props.survey.typesOfQuestions.map(x => (<option key={x.value} value={x.value}>{x.name}</option>))}
+                            {this.props.survey.typesOfQuestions.map(x => (<option key={x.id?x.id:x._id} value={x.id?x.id:x._id}>{x.name}</option>))}
                         </Input>
                         </Col>
                     <br />
@@ -79,7 +79,7 @@ class NewQuestionBase extends Component {
                     <div className="row">
                         <div className="col-sm-12">
                         {this.props.survey.possibilities
-                            .filter(x => x.sectionId === this.props.sectionId && x.questionId === this.props.questionId && this.props.typeId < 3)
+                            .filter(x => x.sectionId === this.props.sectionId && x.questionId === this.props.questionId && ((this.props.typeId == 1 || this.props.typeId == '5bffb0ec682ae23931c642e8') || (this.props.typeId == 2 || this.props.typeId == '5bffb10273796c52838e644f')))
                             .map(x => (
                             <NewPossibility 
                                 key={x.possibilityId} 
@@ -98,7 +98,7 @@ class NewQuestionBase extends Component {
                     </div>
                     <div className="row">
                         <div className="col-sm-12">
-                            {this.props.edit ? '' : this.props.typeId < 3 ? <Button className="float-sm-right" color="primary" size="sm" onClick={this.handleAddPossibility} >Add new possibility</Button>:''}
+                            {this.props.edit ? '' : ((this.props.typeId == 1 || this.props.typeId == '5bffb0ec682ae23931c642e8') || (this.props.typeId == 2 || this.props.typeId == '5bffb10273796c52838e644f')) ? <Button className="float-sm-right" color="primary" size="sm" onClick={this.handleAddPossibility} >Add new possibility</Button>:''}
                         </div>
                     </div>
                 </div>

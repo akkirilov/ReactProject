@@ -24,16 +24,19 @@ class NewSurveyBase extends Component {
 
     componentDidMount() {
         const dispatch = this.props.dispatch;
-        surveyService.getTypesOfQuestions()
+        
+        surveyService.getTypesOfQuestions(this.props.user.authtoken)
         .then(res => {
-            res = JSON.parse(res);
-            console.log(res)
             if (res.error) {
                 dispatch(notificationActions.error(res.error));
             } else {
+            	dispatch(surveyActions.clearSurvey());
                 dispatch(surveyActions.changeSurveyHeader({typesOfQuestions:res}));
             }
-        }).catch(err => console.log(err.statusText));
+        }).catch(err => {
+        	dispatch(notificationActions.error(err.responseJSON.description));
+        });
+        
     }
 
     handleResetSurvey() {
@@ -57,9 +60,11 @@ class NewSurveyBase extends Component {
         } else {
             surveyService.addSurvey(survey)
             .then(res => {
-                res = JSON.parse(res);
-                if (res.error) {
-                    dispatch(notificationActions.error(res.error));
+                //res = JSON.parse(res);
+                if (res.errors) {
+                	for(let error of res.errors){
+                		dispatch(notificationActions.error(error));
+                	}
                 } else {
                     dispatch(notificationActions.info("Successfully added new survey!"));
                     dispatch(surveyActions.clearSurvey());

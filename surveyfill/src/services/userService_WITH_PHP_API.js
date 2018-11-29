@@ -1,32 +1,45 @@
 import config from '../config/configApp';
 import requestConstants from '../constants/requestConstants';
 import $ from 'jquery'
-import requestService from './requestService';
 
 const USER_ROLE = 1;
-const MODULE = 'user';
-const AUTH_BASIC = 'basic';
-const AUTH_KINVEY = 'kinvey';
-const LOGIN_ENDPOINT = 'login';
-const LOGOUT_ENDPOINT = '_logout';
-const REGISTER_ENDPOINT = '';
 
 function register(user) {
-    let data = {
-    	username:user.username,
-    	email:user.email,
-        password:user.password,
-        role:user
+    const {username, email, password } = user;
+
+    let date = new Date();
+    let userData = {
+        username,
+        email,
+        password,
+        role: USER_ROLE,
+        isBanned: false,
+        isDeleted: false,
+        registerDate: date.toISOString().substr(0, 10)
     };
-    return requestService.post(MODULE, REGISTER_ENDPOINT, AUTH_BASIC, data);
+
+    return $.ajax({
+        type: "POST",
+        data: userData,
+        dataType: "text",
+        url: config.apiUrl + '/users/register'
+    });
 }
 
 function login(user) {
-    let data = {
-        	username:user.username,
-            password:user.password
-        };
-    return requestService.post(MODULE, LOGIN_ENDPOINT, AUTH_BASIC, data);
+    const {username, password } = user;
+
+    let userData = {
+        username,
+        password
+    };
+
+    return $.ajax({
+        type: "POST",
+        data: userData,
+        dataType: "text",
+        url: config.apiUrl + '/users/login'
+    });
 }
 
 function logout(authtoken) {

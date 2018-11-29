@@ -74,7 +74,7 @@ export function survey(state = initialState, action) {
         case surveyConstants.CHANGE_QUESTION_TYPE:
             newState = Object.assign({}, state);
             newState.questions
-                .filter(x => x.sectionId === action.sectionId && x.questionId === action.questionId)[0]['typeId'] = Number(action.questionType);
+                .filter(x => x.sectionId === action.sectionId && x.questionId === action.questionId)[0]['typeId'] = action.questionType;
             return newState;
         case surveyConstants.CHANGE_QUESTION_HEADER:
             newState = Object.assign({}, state);
@@ -118,11 +118,9 @@ export function survey(state = initialState, action) {
             && x.possibilityId === action.possibilityId)[0]['possibilityTitle'] = action.possibilityTitle; 
             return newState; 
         case surveyConstants.REMOVE_POSSIBILITY:
-            console.log(action)
             newState = Object.assign({}, state);
             newState.possibilities = state.possibilities
                 .filter(x => (x.sectionId !== action.sectionId) || (x.questionId !== action.questionId) || (x.possibilityId !== action.possibilityId));
-            console.log(state.possibilities.length + ' -1 = ' + newState.possibilities.length)
             newState.possibilities
                 .filter(x => x.sectionId === action.sectionId)
                 .filter(x => x.questionId === action.questionId)
@@ -134,20 +132,19 @@ export function survey(state = initialState, action) {
                 })
             return newState;
         case surveyConstants.ANSWER:
-        	console.log(action)
         	newState = Object.assign({}, state);
         	let possibiltyValue = action.value;
         	let possibilityId = action.possibilityId;
         	let questionId = action.questionId;
         	let typeId = action.typeId;
-        	if (typeId == 1) {
+        	if (typeId == '5bffb0ec682ae23931c642e8' || typeId == 1) {
 				newState.possibilities
 				.filter(x=> x.questionId == questionId)
 				.forEach(x=> x.marked = false)
 				newState.possibilities
 				.filter(x => x.possibilityId == possibilityId)
 				.forEach(x=> x.marked = true);
-        	} else if(typeId == 2) {
+        	} else if(typeId == '5bffb10273796c52838e644f') {
         		newState.possibilities
 				.filter(x=> x.possibilityId == possibilityId)
 				.forEach(x=> {

@@ -17,16 +17,14 @@ class FillPossibilityBase extends Component {
     }
 
     componentDidMount() {
-    	this.props.survey.possibilities.forEach(x => console.log("pTypeId: "+x.typeId))
-    	console.log(this.props.survey)
         let type = 'radio';
         let labelSize = 'sm-10';
-        if (this.props.typeId == 2) {
+        if (this.props.typeId == '5bffb10273796c52838e644f' || this.props.typeId == 2) {
             type = 'checkbox';
-        } else if (this.props.typeId == 3) {
+        } else if (this.props.typeId == '5bffb10c88903d3936e0a0da' || this.props.typeId == 3) {
             type = 'number';
             labelSize = 'sm-2';
-        } else if (this.props.typeId == 4) {
+        } else if (this.props.typeId == '5bffb11788903d3936e0a10b' || this.props.typeId == 4) {
         	type = 'textarea';
             labelSize = 'sm-2';
         }
@@ -34,26 +32,24 @@ class FillPossibilityBase extends Component {
     }
 
     changeFilledValue(e) {
-    	
         this.props.dispatch(surveyActions.changeFilledValue(this.props.sectionId, this.props.questionId, this.props.possibilityId, this.props.typeId, e.target.value));
     }
 
     render() {
         return (
-            this.props.typeId == 3 || this.props.typeId == 4
-            ? (<FormGroup>
-                <Label for={this.props.possibilityId}>{this.props.questionTitle}</Label>
-                <Input onChange={this.changeFilledValue} type={this.props.typeId == 3?"number":"textarea"} name={this.props.questionId} />
-                
-                <br />
-            </FormGroup>)
-            : (<FormGroup check horizontal>
-                <Label check >
-                <Input onChange={this.changeFilledValue} type={this.props.typeId == 1?"radio":"checkbox"} name={this.props.questionId} />
-                {this.props.possibilityTitle}
-                </Label>
-                <br />
-            </FormGroup>)
+        		 this.state.type == "number" || this.state.type == "textarea"
+                 ? (<FormGroup>
+                     <Label for={this.props.possibilityId}>{this.props.questionTitle}</Label>
+                     <Input onChange={this.changeFilledValue} type={this.state.type} name={this.props.questionId} />
+                     <br />
+                 </FormGroup>)
+                 : (<FormGroup check horizontal>
+                     <Label check >
+                     <Input onChange={this.changeFilledValue} type={this.state.type} name={this.props.questionId} />
+                     {this.props.possibilityTitle}
+                     </Label>
+                     <br />
+                 </FormGroup>)
         );
     }
 }

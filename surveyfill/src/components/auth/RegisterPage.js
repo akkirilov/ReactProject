@@ -39,19 +39,29 @@ class RegisterPageBase extends Component {
 
         userService.register(this.state.formData)
         .then(res => {
-            res = JSON.parse(res);
-            if (res.error) {
-                dispatch(notificationActions.error(res.error));
-            } else {
-                let action = userActions.login();
-                action.authtoken = res.authtoken;
-                action.username = res.username; 
-                action.userId = res.userId;
-                action.role = res.role;
-                dispatch(action);
-                dispatch(notificationActions.info(res.success));
-            }
-        }).catch(err => console.log(err.statusText));
+            //res = JSON.parse(res);
+//            if (res.error) {
+//                dispatch(notificationActions.error(res.error));
+//            } else {
+//                let action = userActions.login();
+//                action.authtoken = res._kmd.authtoken;
+//                action.username = res.username; 
+//                action.userId = res._id;
+//                action.role = res.role;
+//                dispatch(action);
+//                dispatch(notificationActions.info(res.success));
+//            }
+            let action = userActions.login();
+            action.authtoken = res._kmd.authtoken;
+            action.username = res.username; 
+            action.userId = res._id;
+            action.role = res.role;
+            dispatch(action);
+            dispatch(notificationActions.info(res.success));
+        })
+        .catch(err => {
+        	dispatch(notificationActions.error(err.responseJSON.description));
+        });
     }
 
     render() {

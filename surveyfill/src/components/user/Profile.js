@@ -22,11 +22,11 @@ class ProfileBase extends Component {
 	}
 	
 	 componentDidMount() {
-	    	surveyService.getSurveysByUserId(this.props.user)
+	    	surveyService.getSurveysByUserId(this.props.user.userId,this.props.user.authtoken)
 	    	.then(res => {
-	    		res = JSON.parse(res);
-	    		console.log(res)
-	    		this.setState({surveys:res.surveys, ready: true});
+//	    		res = JSON.parse(res);
+	    		console.log('surveys', res)
+	    		this.setState({surveys:res, ready: true});
 	    	})
 	    }
 	
@@ -66,7 +66,7 @@ class ProfileBase extends Component {
 	          <TabPane tabId="1">
 	            <Row>
 	              <Col sm="12">
-	              {this.state.surveys.map(x=> <div key={x.surveyId}>{x.title} <Link to={'/survey-result/' + x.surveyId}>RESULTS </Link> <Link to={'/fill-survey/' + x.surveyId}>FILL </Link> <Link to={'/edit-survey/' + x.surveyId}>EDIT </Link> <Link to={'/delete-survey/' + x.surveyId}>DELETE </Link></div>)}
+	              {this.state.surveys.map(x=> <div key={x.surveyId}>{x.title} <Link to={'/survey-result/' + x._id}>RESULTS </Link> <Link to={'/fill-survey/' + x._id}>FILL </Link> <Link to={'/edit-survey/' + x._id}>EDIT </Link> <Link to={'/delete-survey/' + x._id}>DELETE </Link></div>)}
 	              </Col>
 	            </Row>
 	          </TabPane>

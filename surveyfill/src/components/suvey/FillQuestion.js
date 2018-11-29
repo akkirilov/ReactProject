@@ -10,13 +10,11 @@ import surveyActions from '../../actions/surveyActions';
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 class FillQuestionBase extends Component {
-	
     render() {
         return (
             <div className="row">
             <div className="col-sm-12">
             <h4>Question {this.props.sectionCount}.{this.props.questionCount}. {this.props.questionTitle}</h4>
-                
                 {this.props.survey.possibilities
                     .filter(x => x.sectionId === this.props.sectionId && x.questionId === this.props.questionId)
                     .map(x => (
@@ -29,12 +27,14 @@ class FillQuestionBase extends Component {
                         	qtypeId={x.typeId}
                         	questionTitle={this.props.questionTitle}
                             questionId={x.questionId}
-                            possibilityId={x.possibilityId}
+                            possibilityId={x.possibilityId ? x.possibilityId : x._id}
                             possibilityTitle={x.possibilityTitle} />)
                     )
                 }
                 <br />
-            </div><br /><br />
+            </div>
+            <br />
+            <br />
             </div>
         );
     }

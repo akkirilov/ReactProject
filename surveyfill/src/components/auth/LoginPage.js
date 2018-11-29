@@ -36,23 +36,34 @@ class LoginPageBase extends Component {
             dispatch(notificationActions.error(error));
             return;
         } 
-
         userService.login(this.state.formData)
         .then(res => {
         	console.log('res ',res);
-            res = JSON.parse(res);
-            if (res.error) {
-                dispatch(notificationActions.error(res.error));
-            } else {
-                let action = userActions.login();
-                action.authtoken = res.authtoken;
-                action.username = res.username; 
-                action.userId = res.userId;
-                action.role = res.role;
-                dispatch(action);
-                dispatch(notificationActions.info(res.success));
-            }
-        }).catch(err => console.log(err));
+//            //res = JSON.parse(res);
+//            if (res.error) {
+//                dispatch(notificationActions.error(res.error));
+//            } else {
+//            	
+//                let action = userActions.login();
+//                action.authtoken = res.authtoken;
+//                action.username = res.username; 
+//                action.userId = res.userId;
+//                action.role = res.role;
+//                dispatch(action);
+//                dispatch(notificationActions.info(res.success));
+//            }
+        	if(res.username){
+        		let action = userActions.login();
+              action.authtoken = res._kmd.authtoken;
+              action.username = res.username; 
+              action.userId = res._id;
+              action.role = res.role;
+              dispatch(action);
+              dispatch(notificationActions.info(res.success));
+        	}
+        }).catch(err => {
+        	dispatch(notificationActions.error(err.responseJSON.description));
+        });
     }
 
     render() {

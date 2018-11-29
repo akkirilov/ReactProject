@@ -15,41 +15,69 @@ class FillSurveyBase extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {ready: false}
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
         const dispatch = this.props.dispatch;
         let surveyId = this.props.match.params.id;
-        surveyService.getById(surveyId)
+        surveyService.getById(surveyId, this.props.user.authtoken)
         .then(res => {
-            res = JSON.parse(res);
-            console.log("res from db")
-            console.log(res)
-            if (res.error) {
-                dispatch(notificationActions.error(res.error));
-            } else {
-            	res.surveyId = surveyId;
-                res.title = res.survey[0].title;
-                res.notes = res.survey[0].notes;
-                res.sections.forEach((s, si) => {
-                    s.sectionCount = si + 1;
-                    res.questions.filter(q => q.sectionId === s.sectionId).forEach((q, qi) => {
-                        q.sectionCount = si + 1;
-                        q.questionCount = qi + 1;
-                        q.typeId = q.typeId;
-                        res.possibilities.filter(p => p.questionId === q.questionId)
-                            .forEach((p, pi) => {
-                                p.sectionCount = s.sectionCount;
-                                p.questionCount = q.questionCount;
-                                p.possibilityCount = pi + 1;
-                        })
-                    })
-                })
-                dispatch(surveyActions.initializeSurvey(res));
-            }
-        }).catch(err => console.log(err.statusText));
+        	let survey = res[0];
+        	survey.questions = [];
+        	survey.possibilities = [];
+        	
+        	surveyService.getSectionBySurveyId(survey._id,this.props.user.authtoken)
+        	.then(res => {
+        		survey.sections = res;
+        		for(let s of survey.sections){
+        			s.sectionCount = survey.sections.length;
+        			s.sectionId = s._id;
+        			surveyService.getQuestionBySectionId(s._id,this.props.user.authtoken)
+	    	    	.then(res=>{
+	    	    		survey.questions = survey.questions.concat(res);
+	    	    		let questionCount = survey.questions.length;
+		    	    	for(let q of survey.questions){
+		    	    		q.questionCount = survey.questions.length;
+		    	    		q.sectionId;
+		    	    		q.questionId = q._id
+		    	    		surveyService.getPossibilitiesByQuestionId(q._id,this.props.user.authtoken)
+		    	    		.then(res => {
+		    	    			for(let p of res){
+    	    						p.possibilityId = p._id;
+    	    					}
+		    	    			questionCount--;
+		    	    			survey.possibilities = survey.possibilities.concat(res);
+		    	    			if(questionCount == 0){
+		    	    				surveyService.getTypesOfQuestions(this.props.user.authtoken)
+		    	    				.then(res => {
+		    	    					survey.typesOfQuestions = res;
+		    	    					dispatch(surveyActions.initializeSurvey(survey));
+		    	    					this.setState({surveys:res, ready: true});
+		    	    				})
+		    	    				.catch(err => {
+		    	    		        	dispatch(notificationActions.error(err.responseJSON.description));
+		    	    		        });
+		    	    			}
+		    	    		})
+		    	    		.catch(err => {
+		    	            	dispatch(notificationActions.error(err.responseJSON.description));
+		    	            });
+	    	    		}
+	    	    	})
+	    	    	.catch(err => {
+	    	        	dispatch(notificationActions.error(err.responseJSON.description));
+	    	        });
+        		}
+        	})
+        	.catch(err => {
+            	dispatch(notificationActions.error(err.responseJSON.description));
+            });
+        })
+        .catch(err => {
+        	dispatch(notificationActions.error(err.responseJSON.description));
+        });
     }
 
     handleSubmit(e) {
@@ -82,6 +110,13 @@ class FillSurveyBase extends Component {
 
     render() {
         return (
+        	!this.props.user.authtoken
+            ? <Redirect to="/login" />  
+            :
+        	(!this.state || !this.state.ready) ?
+            	'Loading ...'
+        	:
+        	
             this.state.redirect
             ? this.state.redirect
             : (<div className="row">
