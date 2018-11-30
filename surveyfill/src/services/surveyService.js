@@ -39,7 +39,7 @@ function addSurvey(survey) {
 			isDeleted:0,
 			notes:survey.notes
 			};
-	return requestService.post('appdata','surveys',authtoken, data)
+	return requestService.post('appdata','surveys',authtoken, data, false)
 	.then(res => {
 			surveyId = res._id;
 			for(let section of survey.sections){
@@ -48,31 +48,33 @@ function addSurvey(survey) {
 						surveyId:surveyId,
 						sectionTitle:section.sectionTitle
 				}
-				requestService.post('appdata','sections',authtoken, data)
-				.then(res => {
+			    let sectionReq = requestService.post('appdata','sections',authtoken, data, false);
+				sectionReq.done(res => {
 					sectionId = res._id;
 					for(let question of survey.questions){
 						privateQuestionId = question.questionId;
 						if(question.sectionId == privateSectionId){
+							console.log('survey => ',survey)
 							data = {
 								surveyId:surveyId,
 								sectionId: sectionId,
 								questionTitle: question.questionTitle,
 								isRequired:question.isRequired,
-								typeId:survey.typesOfQuestions[(question.typeId-1)]._id
+								typeId:question.typeId
 							}
-							requestService.post('appdata','questions',authtoken, data)
-							.then(res => {
+							let questionReq = requestService.post('appdata','questions',authtoken, data, false);
+							questionReq.done(res => {
 								questionId = res._id;
 								for(let possibility of survey.possibilities){
-									if(possibility.questionId == privateQuestionId){
+									if(possibility.questionId == privateQuestionId && possibility.sectionId == privateSectionId){
 										data = {
 												surveyId:surveyId,
 												sectionId: sectionId,
 												questionId: questionId,
 												possibilityTitle: possibility.possibilityTitle
 											}
-										requestService.post('appdata','possibilities',authtoken, data)
+										let questionReq = requestService.post('appdata','possibilities',authtoken, data, false)
+										questionReq.done();										
 									}
 								}
 							})
@@ -88,19 +90,19 @@ function addSurvey(survey) {
 	
 }
 
-function getSectionBySurveyId(surveyId, authtoken){
+function getSectionBySurveyId(surveyId, authtoken, syncRequest){
 	let endpoint = 'sections'+'?query={"surveyId":"'+surveyId+'"}';
-	return requestService.get('appdata',endpoint,authtoken);
+	return requestService.get('appdata',endpoint,authtoken, syncRequest);
 }
 
-function getQuestionBySectionId(sectionId, authtoken){
+function getQuestionBySectionId(sectionId, authtoken, syncRequest){
 	let endpoint = 'questions'+'?query={"sectionId":"'+sectionId+'"}';
-	return requestService.get('appdata',endpoint,authtoken);
+	return requestService.get('appdata',endpoint,authtoken, syncRequest);
 }
 
-function getPossibilitiesByQuestionId(questionId, authtoken){
-	let endpoint = 'possibilities'+'?query={"questionId":"'+questionId+'"}';
-	return requestService.get('appdata',endpoint,authtoken);
+function getPossibilitiesByQuestionId(questionId, sectionId, authtoken, syncRequest){
+	let endpoint = 'possibilities'+'?query={"questionId":"'+questionId+'","sectionId":"'+sectionId+'"}';
+	return requestService.get('appdata',endpoint,authtoken, syncRequest);
 }
 
 function getById(surveyId, authtoken) {

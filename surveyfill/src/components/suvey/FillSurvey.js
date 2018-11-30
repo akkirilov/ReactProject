@@ -28,21 +28,20 @@ class FillSurveyBase extends Component {
         	survey.questions = [];
         	survey.possibilities = [];
         	
-        	surveyService.getSectionBySurveyId(survey._id,this.props.user.authtoken)
+        	surveyService.getSectionBySurveyId(survey._id,this.props.user.authtoken,false)
         	.then(res => {
         		survey.sections = res;
         		for(let s of survey.sections){
         			s.sectionCount = survey.sections.length;
         			s.sectionId = s._id;
-        			surveyService.getQuestionBySectionId(s._id,this.props.user.authtoken)
+        			surveyService.getQuestionBySectionId(s._id,this.props.user.authtoken,false)
 	    	    	.then(res=>{
 	    	    		survey.questions = survey.questions.concat(res);
 	    	    		let questionCount = survey.questions.length;
 		    	    	for(let q of survey.questions){
 		    	    		q.questionCount = survey.questions.length;
-		    	    		q.sectionId;
 		    	    		q.questionId = q._id
-		    	    		surveyService.getPossibilitiesByQuestionId(q._id,this.props.user.authtoken)
+		    	    		surveyService.getPossibilitiesByQuestionId(q._id,q.sectionId,this.props.user.authtoken,false)
 		    	    		.then(res => {
 		    	    			for(let p of res){
     	    						p.possibilityId = p._id;
@@ -50,11 +49,12 @@ class FillSurveyBase extends Component {
 		    	    			questionCount--;
 		    	    			survey.possibilities = survey.possibilities.concat(res);
 		    	    			if(questionCount == 0){
-		    	    				surveyService.getTypesOfQuestions(this.props.user.authtoken)
+		    	    				surveyService.getTypesOfQuestions(this.props.user.authtoken,false)
 		    	    				.then(res => {
 		    	    					survey.typesOfQuestions = res;
-		    	    					dispatch(surveyActions.initializeSurvey(survey));
 		    	    					this.setState({surveys:res, ready: true});
+		    	    					console.log('kinvey survey',survey)
+		    	    					dispatch(surveyActions.initializeSurvey(survey));
 		    	    				})
 		    	    				.catch(err => {
 		    	    		        	dispatch(notificationActions.error(err.responseJSON.description));
@@ -90,7 +90,7 @@ class FillSurveyBase extends Component {
          } else {
              surveyService.fillSurvey(survey)
              .then(res => {
-                 res = JSON.parse(res);
+                 //res = JSON.parse(res);
                  console.log("fill survey res ", res)
                  if (res.error) {
                      dispatch(notificationActions.error(res.error));

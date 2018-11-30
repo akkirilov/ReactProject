@@ -12,9 +12,13 @@ const APP_SECRET = '36cf04a02fd04604802375daa2169a9b';
 		}
     }
 
-    function makeRequest(method, module, endpoint, auth) {
+    function makeRequest(method, module, endpoint, auth, syncRequest) {
+    	if(!syncRequest){
+    		syncRequest = false;
+    	}
         return {
             method,
+            async: syncRequest,
             url: BASE_URL + module + '/' + APP_KEY + '/' + endpoint,
             headers: {
                 'Authorization': makeAuth(auth)
@@ -22,24 +26,24 @@ const APP_SECRET = '36cf04a02fd04604802375daa2169a9b';
         };
     }
 
-    function get (module, endpoint, auth) {
-        return $.ajax(makeRequest('GET', module, endpoint, auth));
+    function get (module, endpoint, auth, syncRequest) {
+        return $.ajax(makeRequest('GET', module, endpoint, auth, syncRequest, syncRequest));
     }
 
-    function post (module, endpoint, auth, data) {
-        let req = makeRequest('POST', module, endpoint, auth);
+    function post (module, endpoint, auth, data, syncRequest) {
+        let req = makeRequest('POST', module, endpoint, auth, syncRequest, syncRequest);
         req.data = data;
         return $.ajax(req);
     }
 
-    function update (module, endpoint, auth, data) {
-        let req = makeRequest('PUT', module, endpoint, auth);
+    function update (module, endpoint, auth, data, syncRequest) {
+        let req = makeRequest('PUT', module, endpoint, auth, syncRequest, syncRequest);
         req.data = data;
         return $.ajax(req);
     }
 
-    function remove (module, endpoint, auth) {
-        return $.ajax(makeRequest('DELETE', module, endpoint, auth));
+    function remove (module, endpoint, auth, syncRequest) {
+        return $.ajax(makeRequest('DELETE', module, endpoint, auth, syncRequest));
     }
     
     let requestService = {

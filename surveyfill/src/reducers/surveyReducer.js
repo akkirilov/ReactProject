@@ -74,7 +74,9 @@ export function survey(state = initialState, action) {
         case surveyConstants.CHANGE_QUESTION_TYPE:
             newState = Object.assign({}, state);
             newState.questions
-                .filter(x => x.sectionId === action.sectionId && x.questionId === action.questionId)[0]['typeId'] = action.questionType;
+                .filter(x => x.sectionId === action.sectionId 
+                		&& x.questionId === action.questionId)[0]['typeId'] = action.questionType;
+            console.log('newState.questions',newState.questions)
             return newState;
         case surveyConstants.CHANGE_QUESTION_HEADER:
             newState = Object.assign({}, state);
