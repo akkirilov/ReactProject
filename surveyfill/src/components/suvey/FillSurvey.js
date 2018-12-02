@@ -31,21 +31,26 @@ class FillSurveyBase extends Component {
         	surveyService.getSectionBySurveyId(survey._id,this.props.user.authtoken,false)
         	.then(res => {
         		survey.sections = res;
+        		let sectionNumber = 1;
         		for(let s of survey.sections){
-        			s.sectionCount = survey.sections.length;
+        			s.sectionCount = sectionNumber++;
         			s.sectionId = s._id;
         			surveyService.getQuestionBySectionId(s._id,this.props.user.authtoken,false)
 	    	    	.then(res=>{
 	    	    		survey.questions = survey.questions.concat(res);
 	    	    		let questionCount = survey.questions.length;
-		    	    	for(let q of survey.questions){
-		    	    		q.questionCount = survey.questions.length;
+	    	    		let questionNumber = 1;
+		    	    	for(let q of res){
+		    	    		q.questionCount = questionNumber++;
 		    	    		q.questionId = q._id
-		    	    		surveyService.getPossibilitiesByQuestionId(q._id,q.sectionId,this.props.user.authtoken,false)
+		    	    		surveyService.getPossibilitiesByQuestionId(q._id,this.props.user.authtoken,false)
 		    	    		.then(res => {
 		    	    			for(let p of res){
     	    						p.possibilityId = p._id;
+    	    						p.questionId = p.questionId;
+    	    						p.sectionId = p.sectionId;
     	    					}
+//		    	    			console.log('survey.possibilities',res);
 		    	    			questionCount--;
 		    	    			survey.possibilities = survey.possibilities.concat(res);
 		    	    			if(questionCount == 0){
@@ -53,7 +58,7 @@ class FillSurveyBase extends Component {
 		    	    				.then(res => {
 		    	    					survey.typesOfQuestions = res;
 		    	    					this.setState({surveys:res, ready: true});
-		    	    					console.log('kinvey survey',survey)
+//		    	    					console.log('kinvey survey',survey)
 		    	    					dispatch(surveyActions.initializeSurvey(survey));
 		    	    				})
 		    	    				.catch(err => {
@@ -84,22 +89,22 @@ class FillSurveyBase extends Component {
         e.preventDefault();
         const dispatch = this.props.dispatch;
         let error = surveyValidator.validateFillSurvey(this.props.survey);
+//        error = true;
         let survey = Object.assign({}, this.props.survey, {authtoken: this.props.user.authtoken, userId: this.props.user.userId || 0});
          if (error) {
              this.props.dispatch(notificationActions.error(error));
          } else {
-             surveyService.fillSurvey(survey)
+             surveyService.fillSurvey(survey,this.props.user.authtoken)
              .then(res => {
                  //res = JSON.parse(res);
-                 console.log("fill survey res ", res)
-                 if (res.error) {
-                     dispatch(notificationActions.error(res.error));
-                 } else {
-                     dispatch(notificationActions.info("Successfully filled survey!"));
-                     dispatch(surveyActions.clearSurvey());
-                     this.setState({redirect: <Redirect to='/' />});
-                 }
-             }).catch(err => console.log(err.statusText));
+//                 console.log("fill survey res ", res)
+                 	dispatch(notificationActions.info("Successfully filled survey!"));
+                    dispatch(surveyActions.clearSurvey());
+                    this.setState({redirect: <Redirect to='/' />});
+             })
+             .catch(err => {
+             	dispatch(notificationActions.error(err.responseJSON.description));
+             });
          }
     }
 

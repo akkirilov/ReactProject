@@ -27,17 +27,17 @@ const APP_SECRET = '36cf04a02fd04604802375daa2169a9b';
     }
 
     function get (module, endpoint, auth, syncRequest) {
-        return $.ajax(makeRequest('GET', module, endpoint, auth, syncRequest, syncRequest));
+        return $.ajax(makeRequest('GET', module, endpoint, auth, syncRequest));
     }
 
     function post (module, endpoint, auth, data, syncRequest) {
-        let req = makeRequest('POST', module, endpoint, auth, syncRequest, syncRequest);
+        let req = makeRequest('POST', module, endpoint, auth, syncRequest);
         req.data = data;
         return $.ajax(req);
     }
 
     function update (module, endpoint, auth, data, syncRequest) {
-        let req = makeRequest('PUT', module, endpoint, auth, syncRequest, syncRequest);
+        let req = makeRequest('PUT', module, endpoint, auth, syncRequest);
         req.data = data;
         return $.ajax(req);
     }

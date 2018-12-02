@@ -38,7 +38,21 @@ function validateNewSurvey(survey) {
 
 function validateFillSurvey(survey) { 
     let error;
-
+    for(let q of survey.questions){
+    	if(q.isRequired == 1){
+    		let ok = false;
+    		for(let p of survey.possibilities){
+    			if(p.questionId == q.questionId && p.marked){
+    				ok = true;
+    				break;
+    			}
+    		}
+    		if(!ok){
+    			error = 'Question '+q.questionTitle+' is required!';
+    			break;
+    		}
+    	}
+    }
     return error;
 }
 

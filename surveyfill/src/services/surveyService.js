@@ -100,8 +100,13 @@ function getQuestionBySectionId(sectionId, authtoken, syncRequest){
 	return requestService.get('appdata',endpoint,authtoken, syncRequest);
 }
 
-function getPossibilitiesByQuestionId(questionId, sectionId, authtoken, syncRequest){
-	let endpoint = 'possibilities'+'?query={"questionId":"'+questionId+'","sectionId":"'+sectionId+'"}';
+function getPossibilitiesByQuestionId(questionId, authtoken, syncRequest){
+	let endpoint = 'possibilities'+'?query={"questionId":"'+questionId+'"}';
+	return requestService.get('appdata',endpoint,authtoken, syncRequest);
+}
+
+function getAnswersByPossibilityId(possibilityId, authtoken, syncRequest){
+	let endpoint = 'answers'+'?query={"possibilityId":"'+possibilityId+'"}';
 	return requestService.get('appdata',endpoint,authtoken, syncRequest);
 }
 
@@ -111,17 +116,38 @@ function getById(surveyId, authtoken) {
 
 }
 
-function getByIdWithAnswers(id) {
-    return $.ajax({
-        type: "POST",
-        data: {id},
-        dataType: "text",
-        url: config.apiUrl + '/surveys/getWithAnswers'
-    });
+function getByIdWithAnswers(surveyId, authtoken) {
+	let endpoint = 'surveys'+'?query={"_id": "' + surveyId + '"}';
+    return requestService.get('appdata',endpoint,authtoken);
 }
 
-function fillSurvey(surveyData) {
-	console.log('surveyData ',surveyData)
+function fillSurvey(surveyData,authtoken) {
+//	console.log('surveyData ',surveyData)
+	let dataArr = [];
+	for(let p of surveyData.possibilities){
+		if(p.marked){
+			let data = {
+					possibilityId:p.possibilityId,
+					userId:surveyData.userId,
+					text:p.marked
+			};
+			requestService.post('appdata','answers',authtoken,data);
+		}
+	}
+	let data = {
+			_id:surveyData._id,
+			_acl:surveyData._acl,
+			_kmd:surveyData._kmd,
+			userId:surveyData.userId,
+			isDeleted:surveyData.isDeleted,
+			notes:surveyData.notes,
+			title:surveyData.title,
+			respondents:(Number(surveyData.respondents)+1)
+	};
+	return requestService.update('appdata','surveys/'+surveyData._id,authtoken,data);
+	
+	
+//	return ()=>{return 'sasas'};
 //    return $.ajax({
 //        type: "POST",
 //        data: surveyData,
@@ -165,6 +191,7 @@ let surveyService = {
     getSectionBySurveyId,
     getQuestionBySectionId,
     getPossibilitiesByQuestionId,
+    getAnswersByPossibilityId,
     getByIdWithAnswers
 }
 
